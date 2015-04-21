@@ -1,5 +1,7 @@
 package bitpacker;
 
+import java.nio.ByteBuffer;
+
 public class Unpacker
 {
 	public static void main(String[] args)
@@ -16,8 +18,9 @@ public class Unpacker
 				
 				if (phrase == -1 || mismatch == -1)
 					break;
-
-				System.out.write((int) phrase);
+				
+				byte[] bytes = ByteBuffer.allocate(4).putInt((int)phrase).array();
+				System.out.write(bytes);
 				System.out.write((byte) mismatch);
 				
 				System.err.println("Phrase " + (int) phrase + " (" + bits + " bits), mismatch " + (char) mismatch);
