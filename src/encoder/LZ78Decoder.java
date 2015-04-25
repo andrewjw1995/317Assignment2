@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Decoder implements Closeable
+public class LZ78Decoder implements Closeable
 {
 	private List<byte[]> dictionary = new ArrayList<byte[]>();
 	private InputStream input;
 	private OutputStream output;
 	
-	public Decoder(InputStream input, OutputStream output)
+	public LZ78Decoder(InputStream input, OutputStream output)
 	{
 		this.input = input;
 		this.output = output;
