@@ -72,4 +72,20 @@ public class LZ78Encoder implements Closeable {
 		input.close();
 		output.close();
 	}
+	
+	public static void main(String[] args)
+	{
+		try(LZ78Encoder encoder = new LZ78Encoder(System.in, System.out))
+		{
+			encoder.encode();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			System.out.flush();
+		}
+	}
 }

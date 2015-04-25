@@ -64,7 +64,7 @@ public class LZ78Decoder implements Closeable
 	
 	public static void main(String[] args)
 	{
-		try(Decoder decoder = new Decoder(System.in, System.out))
+		try(LZ78Decoder decoder = new LZ78Decoder(System.in, System.out))
 		{
 			decoder.decode();
 		}
