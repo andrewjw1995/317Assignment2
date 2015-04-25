@@ -9,7 +9,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class LZ78Encoder implements Closeable {
 	{
 		this.input = input;
 		this.output = output;
-		dictionary.add(new Byte[0], 0);
+		dictionary.add(new ArrayList<Byte>(), 0);
 	}
     
     public void encode() throws IOException
@@ -40,15 +39,11 @@ public class LZ78Encoder implements Closeable {
     		}
     		
     		phrase.add((byte)next);
-    		Byte[] phraseArray = new Byte[phrase.size()];
-    		phrase.toArray(phraseArray);
-    		
-    		Integer index = dictionary.get(phraseArray);
+    		Integer index = dictionary.get(phrase);
     		if (index == null)
     		{
+    			dictionary.add(phrase, dictionary.size());
     			write(phrase);
-    			dictionary.add(phraseArray, dictionary.size());
-    			phrase.clear();
     		}
     	}
     }
@@ -57,15 +52,14 @@ public class LZ78Encoder implements Closeable {
     private void write(List<Byte> phrase) throws IOException
     {
 		byte mismatch = phrase.remove(phrase.size() - 1);
-		Byte[] phraseArray = new Byte[phrase.size()];
-		phrase.toArray(phraseArray);
-		int index = dictionary.get(phraseArray);
-		byte[] bytes = ByteBuffer.allocate(5)
-				.putInt(index)
-				.put(mismatch)
-				.array();
-		System.err.println("(" + index + ", " + mismatch + ")");
-    	output.write(bytes);
+		int index = dictionary.get(phrase);
+		phrase.clear();
+		
+    	output.write(index << 24);
+    	output.write(index << 16);
+    	output.write(index << 8);
+    	output.write(index);
+    	output.write(mismatch);
     }
 
 	@Override
