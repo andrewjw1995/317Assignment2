@@ -31,7 +31,6 @@ public class LZ78Decoder implements Closeable
 				close();
 				return;
 			}
-			
 			index = index << 24;
 			for (int offset = 16; offset >= 0; offset -= 8)
 			{
@@ -50,8 +49,9 @@ public class LZ78Decoder implements Closeable
 			extended[phrase.length] = (byte) mismatch;
 			dictionary.add(extended);
 			
-			for (byte part : extended)
-				output.write(part);
+			System.err.println("Phrase number: " + index + ", phrase: " + Arrays.toString(extended));
+			
+			output.write(extended);
 		}
 	}
 
@@ -60,5 +60,21 @@ public class LZ78Decoder implements Closeable
 	{
 		input.close();
 		output.close();
+	}
+	
+	public static void main(String[] args)
+	{
+		try(Decoder decoder = new Decoder(System.in, System.out))
+		{
+			decoder.decode();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			System.out.flush();
+		}
 	}
 }
