@@ -1,7 +1,6 @@
 package encoder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -15,15 +14,21 @@ public class Trie<K, V>
     private List<Trie<K, V>> children = new ArrayList<Trie<K, V>>();
 
     public Trie() { }
-    
-    private Trie(K[] sequence, V value)
+
+    private Trie(K[] sequence, int offset, V value)
     {
-    	key = sequence[0];
-    	if (sequence.length > 1)
-    	{
-    		K[] subsequence = Arrays.copyOfRange(sequence, 1, sequence.length);
-    		children.add(new Trie<K, V>(subsequence, value));
-    	}
+    	key = sequence[offset];
+    	if (sequence.length - offset > 1)
+    		children.add(new Trie<K, V>(sequence, offset + 1, value));
+    	else
+    		this.value = value;
+    }
+    
+    private Trie(List<K> sequence, int offset, V value)
+    {
+    	key = sequence.get(offset);
+    	if (sequence.size() - offset > 1)
+    		children.add(new Trie<K, V>(sequence, offset + 1, value));
     	else
     		this.value = value;
     }
@@ -50,20 +55,42 @@ public class Trie<K, V>
      */
     public V add(K[] sequence, V value)
     {
-    	if (sequence.length == 0)
+    	return add(sequence, 0, value);
+    }
+    
+    public V add(List<K> sequence, int offset, V value)
+    {
+    	if (sequence.size() == offset)
     	{
     		V old = this.value;
     		this.value = value;
     		return old;
     	}
     	
-		K key = sequence[0];
-		K[] subsequence = Arrays.copyOfRange(sequence, 1, sequence.length);
+		K key = sequence.get(offset);
 		for (Trie<K, V> child : children)
 			if (child.key == key)
-				return child.add(subsequence, value);
+				return child.add(sequence, offset + 1, value);
 		
-		children.add(new Trie<K, V>(sequence, value));
+		children.add(new Trie<K, V>(sequence, offset, value));
+		return null;
+    }
+    
+    public V add(K[] sequence, int offset, V value)
+    {
+    	if (sequence.length == offset)
+    	{
+    		V old = this.value;
+    		this.value = value;
+    		return old;
+    	}
+    	
+		K key = sequence[offset];
+		for (Trie<K, V> child : children)
+			if (child.key == key)
+				return child.add(sequence, offset + 1, value);
+		
+		children.add(new Trie<K, V>(sequence, offset, value));
 		return null;
     }
     
@@ -72,14 +99,31 @@ public class Trie<K, V>
      */
     public V get(K[] sequence)
     {
-    	if (sequence.length == 0)
+    	return get(sequence, 0);
+    }
+    
+    public V get(List<K> sequence, int offset)
+    {
+    	if (sequence.size() == offset)
     		return value;
 
-		K key = sequence[0];
-		K[] subsequence = Arrays.copyOfRange(sequence, 1, sequence.length);
+		K key = sequence.get(offset);
 		for (Trie<K, V> child : children)
 			if (child.key == key)
-				return child.get(subsequence);
+				return child.get(sequence, offset + 1);
+    	
+		return null;
+    }
+    
+    public V get(K[] sequence, int offset)
+    {
+    	if (sequence.length == offset)
+    		return value;
+
+		K key = sequence[offset];
+		for (Trie<K, V> child : children)
+			if (child.key == key)
+				return child.get(sequence, offset + 1);
     	
 		return null;
     }

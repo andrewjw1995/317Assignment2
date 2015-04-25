@@ -34,7 +34,8 @@ public class LZ78Encoder implements Closeable {
     		int next = input.read();
     		if (next == -1)
     		{
-    			write(phrase);
+    			if (phrase.size() > 0)
+    				write(phrase);
     			return;
     		}
     		
@@ -63,6 +64,7 @@ public class LZ78Encoder implements Closeable {
 				.putInt(index)
 				.put(mismatch)
 				.array();
+		System.err.println("(" + index + ", " + mismatch + ")");
     	output.write(bytes);
     }
 
