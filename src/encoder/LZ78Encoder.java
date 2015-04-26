@@ -14,6 +14,7 @@ import java.util.List;
 
 public class LZ78Encoder implements Closeable {
 	private Trie<Byte, Integer> dictionary = new Trie<Byte, Integer>();
+	private int size = 1; // trie has size method, but it expands all nodes
 	private InputStream input;
 	private OutputStream output;
 
@@ -42,7 +43,8 @@ public class LZ78Encoder implements Closeable {
     		Integer index = dictionary.get(phrase);
     		if (index == null)
     		{
-    			dictionary.add(phrase, dictionary.size());
+    			dictionary.add(phrase, size);
+    			size++;
     			write(phrase);
     		}
     	}

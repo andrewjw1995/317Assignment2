@@ -1,7 +1,7 @@
 package encoder;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /*
@@ -12,7 +12,7 @@ public class Trie<K extends Comparable<K>, V> implements Comparable<K>
     private K key;
     private V value;
     // Type of the list is not important, so long as it can add, remove, and iterate
-    private List<Trie<K, V>> children = new ArrayList<Trie<K, V>>();
+    private List<Trie<K, V>> children = new LinkedList<Trie<K, V>>();
     private Trie<K, V> last;
 
     public Trie() { }
