@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,36 +24,20 @@ public class LZ78Decoder implements Closeable
 	
 	public void decode() throws IOException
 	{
-		while(true)
+		byte[] bytes = new byte[5];
+		while(input.read(bytes) == 5)
 		{
-			int index = input.read();
-			if (index == -1)
-			{
-				close();
-				return;
-			}
-			index = index << 24;
-			for (int offset = 16; offset >= 0; offset -= 8)
-			{
-				int part = input.read();
-				if (part == -1)
-					throw new IOException("File ended unexpectedly");
-				index |= part << offset;
-			}
-			
-			int mismatch = input.read();
-			if (mismatch == -1)
-				throw new IOException("File ended unexpectedly");
+			ByteBuffer buffer = ByteBuffer.wrap(bytes);
+			int index = buffer.getInt();
+			byte mismatch = buffer.get();
 			
 			byte[] phrase = dictionary.get(index);
 			byte[] extended = Arrays.copyOf(phrase, phrase.length + 1);
-			extended[phrase.length] = (byte) mismatch;
+			extended[phrase.length] = mismatch;
 			dictionary.add(extended);
-			
-			System.err.println("Phrase number: " + index + ", phrase: " + Arrays.toString(extended));
-			
 			output.write(extended);
 		}
+		close();
 	}
 
 	@Override

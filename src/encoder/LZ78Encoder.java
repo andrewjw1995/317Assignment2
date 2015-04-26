@@ -9,6 +9,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,17 +29,9 @@ public class LZ78Encoder implements Closeable {
     public void encode() throws IOException
     {
     	List<Byte> phrase = new ArrayList<Byte>();
-    	
-    	while(true)
+    	int next;
+    	while((next = input.read()) != -1)
     	{
-    		int next = input.read();
-    		if (next == -1)
-    		{
-    			if (phrase.size() > 0)
-    				write(phrase);
-    			return;
-    		}
-    		
     		phrase.add((byte)next);
     		Integer index = dictionary.get(phrase);
     		if (index == null)
@@ -48,6 +41,9 @@ public class LZ78Encoder implements Closeable {
     			write(phrase);
     		}
     	}
+
+		if (phrase.size() > 0)
+			write(phrase);
     }
     
     // Assumes phrase exists in dictionary
@@ -57,11 +53,7 @@ public class LZ78Encoder implements Closeable {
 		int index = dictionary.get(phrase);
 		phrase.clear();
 		
-    	output.write(index << 24);
-    	output.write(index << 16);
-    	output.write(index << 8);
-    	output.write(index);
-    	output.write(mismatch);
+    	output.write(ByteBuffer.allocate(5).putInt(index).put(mismatch).array());
     }
 
 	@Override
