@@ -25,9 +25,10 @@ public class LZ78Decoder implements Closeable
 	public void decode() throws IOException
 	{
 		byte[] bytes = new byte[5];
+		ByteBuffer buffer = ByteBuffer.wrap(bytes);
 		while(input.read(bytes) == 5)
 		{
-			ByteBuffer buffer = ByteBuffer.wrap(bytes);
+			buffer.clear();
 			int index = buffer.getInt();
 			byte mismatch = buffer.get();
 			

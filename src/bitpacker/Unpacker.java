@@ -10,6 +10,8 @@ public class Unpacker
 		{
 			int phrases = 1; // The escape phrase (0)
 			int bits = 0;
+			byte[] bytes = new byte[5];
+			ByteBuffer buffer = ByteBuffer.wrap(bytes);
 			
 			while (true)
 			{
@@ -19,7 +21,9 @@ public class Unpacker
 				if (phrase == -1 || mismatch == -1)
 					break;
 				
-				byte[] bytes = ByteBuffer.allocate(5).putInt((int)phrase).put((byte) mismatch).array();
+				buffer.clear();
+				buffer.putInt((int)phrase);
+				buffer.put((byte) mismatch);
 				System.out.write(bytes);
 				
 				// Power of two - https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2

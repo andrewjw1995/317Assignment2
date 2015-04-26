@@ -11,10 +11,11 @@ public class Packer
 			int phrases = 1; // The escape phrase (0)
 			int bits = 0;
 			byte[] bytes = new byte[5];
+			ByteBuffer buffer = ByteBuffer.wrap(bytes);
 			
 			while (System.in.read(bytes) == 5)
 			{
-				ByteBuffer buffer = ByteBuffer.wrap(bytes);
+				buffer.clear();
 				int phrase = buffer.getInt();
 				byte mismatch = buffer.get();
 				

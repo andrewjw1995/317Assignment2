@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package encoder;
 
 import java.io.Closeable;
@@ -18,6 +13,8 @@ public class LZ78Encoder implements Closeable {
 	private int size = 1; // trie has size method, but it expands all nodes
 	private InputStream input;
 	private OutputStream output;
+	private byte[] bytes = new byte[5];
+	private ByteBuffer buffer = ByteBuffer.wrap(bytes);
 
 	public LZ78Encoder(InputStream input, OutputStream output)
 	{
@@ -52,8 +49,9 @@ public class LZ78Encoder implements Closeable {
 		byte mismatch = phrase.remove(phrase.size() - 1);
 		int index = dictionary.get(phrase);
 		phrase.clear();
-		
-    	output.write(ByteBuffer.allocate(5).putInt(index).put(mismatch).array());
+		buffer.clear();
+		buffer.putInt(index).put(mismatch);
+    	output.write(bytes);
     }
 
 	@Override

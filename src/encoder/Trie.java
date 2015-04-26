@@ -13,6 +13,9 @@ public class Trie<K extends Comparable<K>, V> implements Comparable<K>
     private V value;
     // Type of the list is not important, so long as it can add, remove, and iterate
     private List<Trie<K, V>> children = new LinkedList<Trie<K, V>>();
+    
+    // Our algorithm will repeatedly search the trie with one more key in the sequence
+    // Storing the last accessed child will give good speed up.
     private Trie<K, V> last;
 
     public Trie() { }
