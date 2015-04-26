@@ -19,21 +19,13 @@ public class Unpacker
 				if (phrase == -1 || mismatch == -1)
 					break;
 				
-				byte[] bytes = ByteBuffer.allocate(4).putInt((int)phrase).array();
+				byte[] bytes = ByteBuffer.allocate(5).putInt((int)phrase).put((byte) mismatch).array();
 				System.out.write(bytes);
-				System.out.write((byte) mismatch);
 				
-				System.err.println("Phrase " + (int) phrase + " (" + bits + " bits), mismatch " + (char) mismatch);
-
-				// phrase is an index, so we add one to compare to the total
-				// mismatch byte creates a new phrase, so add one
-				if (phrase + 2 > phrases)
-				{
-					// Power of two - https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
-					if ((phrases & (phrases - 1)) == 0)
-						bits++;
-					phrases++;
-				}
+				// Power of two - https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
+				if ((phrases & (phrases - 1)) == 0)
+					bits++;
+				phrases++;
 			}
 		}
 		catch(Exception e)

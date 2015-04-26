@@ -1,5 +1,7 @@
 package bitpacker;
 
+import java.nio.ByteBuffer;
+
 public class Packer
 {
 	public static void main(String[] args)
@@ -8,25 +10,22 @@ public class Packer
 		{
 			int phrases = 1; // The escape phrase (0)
 			int bits = 0;
+			byte[] bytes = new byte[5];
 			
-			while (true)
+			while (System.in.read(bytes) == 5)
 			{
-				int phrase = System.in.read();
-				int mismatch = System.in.read();
-				if (phrase == -1 || mismatch == -1)
-					break;
+				ByteBuffer buffer = ByteBuffer.wrap(bytes);
+				int phrase = buffer.getInt();
+				byte mismatch = buffer.get();
 				
 				output.write(phrase, bits);
-				output.write((byte)mismatch);
+				output.write(mismatch);
 
 				// phrase is an index, so we add one to compare to the total
 				// mismatch byte creates a new phrase
-				if (phrase + 1 == phrases)
-				{
-					if ((phrases & (phrases - 1)) == 0)
-						bits++;
-					phrases++;
-				}
+				if ((phrases & (phrases - 1)) == 0)
+					bits++;
+				phrases++;
 			}
 		}
 		catch(Exception e)
